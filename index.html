@@ -1,27 +1,57 @@
-// Rotación secuencial de WhatsApp
-      const numerosWhatsapp = [
-        "5493513806851",
-        "5493562673960",
-        "5491158518867",
-        "5493512518920",
-      ];
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <title>Prueba Rotación WhatsApp</title>
+  <style>
+    body { font-family: sans-serif; padding: 2rem; }
+    #debug { margin-top: 1rem; color: crimson; }
+    .cta-button { display: inline-flex; align-items: center; padding: .5rem 1rem; background: #25D366; color: white; border-radius: .5rem; text-decoration: none; }
+    .cta-button img { width: 1.5rem; margin-right: .5rem; }
+  </style>
+</head>
+<body>
 
-      const mensaje = "Hola, quisiera un usuario y quiero cargar para tener mi bono de BIENVENIDA SOLO POR HOY";
+  <a id="whatsapp-btn" href="#" class="cta-button" target="_blank">
+    <img src="https://upload.wikimedia.org/wikipedia/commons/6/6b/WhatsApp.svg" alt="WhatsApp">
+    JUGAR!
+  </a>
 
-      function obtenerIndiceActual() {
-        let index = localStorage.getItem('wa_index');
-        return index ? parseInt(index) : 0;
-      }
+  <!-- Aquí veremos en pantalla qué índice está usando el script -->
+  <div id="debug">Índice actual: —</div>
 
-      function guardarSiguienteIndice(index) {
-        const siguiente = (index + 1) % numerosWhatsapp.length;
-        localStorage.setItem('wa_index', siguiente);
-      }
+  <script>
+    // 1) Lista de números y mensaje
+    const nums = [
+      "5493513806851",
+      "5493562673960",
+      "5491158518867",
+      "5493512518920",
+    ];
+    const msg = "Hola, quisiera un usuario y quiero cargar para tener mi bono de BIENVENIDA SOLO POR HOY";
 
-      document.getElementById('whatsapp-btn').addEventListener('click', function (e) {
-        const index = obtenerIndiceActual();
-        const numero = numerosWhatsapp[index];
-        const url = https://wa.me/${numero}?text=${encodeURIComponent(mensaje)};
-        this.href = url;
-        guardarSiguienteIndice(index);
-      });
+    // 2) Función que maneja la rotación
+    function rotaWhatsApp() {
+      // 2.1) Leemos índice (o 0 si no existe o es inválido)
+      let raw = localStorage.getItem('wa_index');
+      let i = parseInt(raw, 10);
+      if (isNaN(i) || i < 0 || i >= nums.length) i = 0;
+
+      // 2.2) Construimos la URL y la aplicamos al enlace
+      const numero = nums[i];
+      const link = document.getElementById('whatsapp-btn');
+      link.href = `https://wa.me/${numero}?text=${encodeURIComponent(msg)}`;
+
+      // 2.3) Mostramos en pantalla el índice para que lo veas
+      document.getElementById('debug').innerText = `Índice actual: ${i}`;
+
+      // 2.4) Guardamos el siguiente índice
+      localStorage.setItem('wa_index', (i + 1) % nums.length);
+    }
+
+    // 3) Ejecutamos al cargar la página
+    document.addEventListener('DOMContentLoaded', rotaWhatsApp);
+  </script>
+
+</body>
+</html>
